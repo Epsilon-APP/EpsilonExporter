@@ -1,0 +1,4 @@
+name: "EpsilonExporter"
+author: "EliXorZz"
+version: 1.0
+main: fr.epsilon.exporter.EpsilonExporter

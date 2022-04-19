@@ -1,0 +1,6 @@
+dependencies {
+    implementation 'io.kubernetes:client-java:14.0.0'
+    implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.9.3'
+
+    compileOnly group: 'com.google.code.gson', name: 'gson', version: '2.9.0'
+}
