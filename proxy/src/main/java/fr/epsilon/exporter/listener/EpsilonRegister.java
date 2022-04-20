@@ -17,14 +17,16 @@ import okhttp3.Call;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class EpsilonRegister implements Runnable {
-    private final static String NAMESPACE = System.getenv("KUBE_NAMESPACE");
-
     private final static String INSTANCE_TYPE_LABEL = "epsilon.fr/instance";
     private final static String TEMPLATE_LABEL = "epsilon.fr/template";
 
@@ -33,9 +35,19 @@ public class EpsilonRegister implements Runnable {
     private EpsilonExporter main;
     private ConcurrentMap<String, ServerInfo> hubs;
 
+    private String namespace;
+
     public EpsilonRegister(EpsilonExporter main) {
         this.main = main;
         this.hubs = new ConcurrentHashMap<>();
+
+        Path namespacePath = Paths.get("/var/run/secrets/kubernetes.io/serviceaccount/namespace");
+
+        try (Stream<String> lines = Files.lines(namespacePath)) {
+            this.namespace = lines.collect(Collectors.joining(System.lineSeparator()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public List<ServerInfo> getHubs() {
@@ -61,7 +73,7 @@ public class EpsilonRegister implements Runnable {
                 CoreV1Api api = Epsilon.get().getKubeApi();
                 ApiClient client = Epsilon.get().getKubeClient();
 
-                Call call = api.listNamespacedPodCall(NAMESPACE, "false", null, null, null, INSTANCE_TYPE_LABEL + "=server", null, null, null, null, true, null);
+                Call call = api.listNamespacedPodCall(namespace, "false", null, null, null, INSTANCE_TYPE_LABEL + "=server", null, null, null, null, true, null);
 
                 try (Watch<V1Pod> watch = Watch.createWatch(client, call, new TypeToken<Watch.Response<V1Pod>>(){}.getType())) {
                     for (Watch.Response<V1Pod> event : watch) {

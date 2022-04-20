@@ -59,7 +59,7 @@ public class Epsilon {
     }
 
     public String name() {
-        return System.getenv("NAME");
+        return System.getenv("HOSTNAME");
     }
 
     public ETemplate template() {
