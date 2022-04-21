@@ -43,7 +43,7 @@ public class EpsilonMapIgniter {
 
     private void downloadAndExtract(String map) {
         try {
-            String url = Epsilon.get().getEpsilonTemplateURL("maps/" + map + "/get");
+            String url = Epsilon.get().getEpsilonTemplateURL("/maps/" + map + "/get");
 
             Request request = new Request.Builder().url(url).build();
             Response response = client.newCall(request).execute();
