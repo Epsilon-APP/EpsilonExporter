@@ -1,7 +1,7 @@
 package fr.epsilon.common.queue;
 
 import com.google.gson.Gson;
-import fr.epsilon.common.Epsilon;
+import fr.epsilon.common.utils.EpsilonEnvironments;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -30,7 +30,7 @@ public class EQueueModule {
         byte[] json = gson.toJson(queuePlayer).getBytes(StandardCharsets.UTF_8);
 
         Request request = new Request.Builder()
-                .url(Epsilon.get().getEpsilonURL("/queue/push"))
+                .url(EpsilonEnvironments.getEpsilonURL("/queue/push"))
                 .post(RequestBody.create(json))
                 .build();
 

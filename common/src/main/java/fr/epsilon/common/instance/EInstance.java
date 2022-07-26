@@ -30,10 +30,10 @@ public class EInstance {
     }
 
     public boolean enableInGame() {
-        return Epsilon.get().inGameInstance(name);
+        return Epsilon.get().instanceModule().inGameInstance(name);
     }
 
     public boolean close() {
-        return Epsilon.get().closeInstance(name);
+        return Epsilon.get().instanceModule().closeInstance(name);
     }
 }

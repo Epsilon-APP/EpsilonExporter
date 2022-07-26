@@ -14,8 +14,6 @@ import java.nio.file.Paths;
 public class EpsilonExporter extends JavaPlugin {
     @Override
     public void onEnable() {
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> Epsilon.get().shutdown()));
-
         ETemplate template = Epsilon.get().template();
 
         getServer().getLogger().info("Download map ...");
