@@ -1,7 +1,6 @@
 package fr.epsilon.common.instance;
 
 import com.google.gson.Gson;
-import fr.epsilon.common.Epsilon;
 import fr.epsilon.common.utils.EpsilonEnvironments;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
