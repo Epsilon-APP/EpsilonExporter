@@ -4,6 +4,7 @@ import fr.epsilon.exporter.commands.HubCommand;
 import fr.epsilon.exporter.listener.EpsilonConnection;
 import fr.epsilon.exporter.listener.EpsilonRegister;
 import net.md_5.bungee.api.plugin.Plugin;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,8 +25,7 @@ public class EpsilonExporter extends Plugin {
         getProxy().getServers().clear();
 
         this.register = new EpsilonRegister(this);
-
-        getProxy().getScheduler().runAsync(this, register);
+        register.runInformer();
 
         EpsilonEventStream.init(this);
 

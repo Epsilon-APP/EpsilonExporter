@@ -5,16 +5,15 @@ import com.launchdarkly.eventsource.EventHandler;
 import com.launchdarkly.eventsource.MessageEvent;
 import fr.epsilon.exporter.EpsilonEventStream;
 import fr.epsilon.exporter.EpsilonExporter;
-import fr.epsilon.exporter.objects.EpsilonServerClearPacket;
 import fr.epsilon.exporter.objects.EpsilonServerPacket;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class EpsilonEventListener implements EventHandler {
-    private static Gson GSON = new Gson();
+    private static final Gson GSON = new Gson();
 
-    private EpsilonExporter main;
-    private EpsilonEventStream eventStream;
+    private final EpsilonExporter main;
+    private final EpsilonEventStream eventStream;
 
     public EpsilonEventListener(EpsilonExporter main, EpsilonEventStream eventStream) {
         this.main = main;
@@ -46,21 +45,16 @@ public class EpsilonEventListener implements EventHandler {
 
                 main.getLogger().info("Send player to " + server.getName());
             }
-        }else if (eventType == EventType.ClearServer) {
-            EpsilonServerClearPacket packet = GSON.fromJson(message.getData(), EpsilonServerClearPacket.class);
-            String name = packet.getServer();
-
-            main.getRegister().removeServer(name);
-
-            main.getLogger().info("Clear server" + name);
         }
     }
 
     @Override
-    public void onComment(String comment) {}
+    public void onComment(String comment) {
+    }
 
     @Override
-    public void onError(Throwable throwable) {}
+    public void onError(Throwable throwable) {
+    }
 
     enum EventType {
         SendToServer,

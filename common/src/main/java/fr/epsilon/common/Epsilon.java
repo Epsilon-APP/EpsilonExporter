@@ -1,13 +1,17 @@
 package fr.epsilon.common;
 
 import com.google.gson.Gson;
+import fr.epsilon.common.crd.EpsilonInstance;
+import fr.epsilon.common.crd.EpsilonInstanceList;
 import fr.epsilon.common.instance.EInstance;
 import fr.epsilon.common.instance.EInstanceList;
 import fr.epsilon.common.queue.EQueueModule;
 import fr.epsilon.common.template.ETemplate;
+import io.kubernetes.client.informer.SharedInformerFactory;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.util.Config;
+import io.kubernetes.client.util.generic.GenericKubernetesApi;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,21 +23,26 @@ import java.util.logging.Logger;
 public class Epsilon {
     private static Epsilon singleton;
 
+    private final OkHttpClient okHttp;
+    private final Gson gson;
+    private final EQueueModule queueModule;
+
     private ApiClient kubeClient;
     private CoreV1Api kubeApi;
 
-    private OkHttpClient okHttp;
-    private Gson gson;
+    private GenericKubernetesApi<EpsilonInstance, EpsilonInstanceList> epsilonInstanceClient;
+    private SharedInformerFactory informerFactory;
 
     private ETemplate template;
-    private EQueueModule queueModule;
 
     public Epsilon() {
         try {
             this.kubeClient = Config.defaultClient();
-            kubeClient.setReadTimeout(0);
-
             this.kubeApi = new CoreV1Api(kubeClient);
+
+            this.epsilonInstanceClient = new GenericKubernetesApi<>(EpsilonInstance.class, EpsilonInstanceList.class, "controller.epsilon.fr", "v1", "epsiloninstances", kubeClient);
+
+            this.informerFactory = new SharedInformerFactory();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -50,12 +59,27 @@ public class Epsilon {
         this.queueModule = new EQueueModule(okHttp, gson);
     }
 
+    public static Epsilon get() {
+        if (singleton == null)
+            singleton = new Epsilon();
+
+        return singleton;
+    }
+
     public ApiClient getKubeClient() {
         return kubeClient;
     }
 
     public CoreV1Api getKubeApi() {
         return kubeApi;
+    }
+
+    public GenericKubernetesApi<EpsilonInstance, EpsilonInstanceList> getEpsilonInstanceClient() {
+        return epsilonInstanceClient;
+    }
+
+    public SharedInformerFactory getInformerFactory() {
+        return informerFactory;
     }
 
     public String name() {
@@ -202,12 +226,5 @@ public class Epsilon {
 
     public String getEpsilonTemplateURL(String endpoint) {
         return "http://" + System.getenv("HOST_TEMPLATE") + ":8000" + endpoint;
-    }
-
-    public static Epsilon get() {
-        if (singleton == null)
-            singleton = new Epsilon();
-
-        return singleton;
     }
 }
