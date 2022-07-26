@@ -8,7 +8,7 @@ import java.net.URI;
 import java.time.Duration;
 
 public class EpsilonEventStream {
-    private EpsilonEventListener listener;
+    private final EpsilonEventListener listener;
     private EventSource eventSource;
 
     private EpsilonEventStream(EpsilonExporter main) {

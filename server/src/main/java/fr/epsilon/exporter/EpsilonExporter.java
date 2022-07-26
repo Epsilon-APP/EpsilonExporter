@@ -1,7 +1,7 @@
 package fr.epsilon.exporter;
 
-import fr.epsilon.common.template.ETemplate;
 import fr.epsilon.common.Epsilon;
+import fr.epsilon.common.template.ETemplate;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;

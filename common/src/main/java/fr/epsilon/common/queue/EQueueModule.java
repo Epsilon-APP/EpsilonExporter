@@ -13,8 +13,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class EQueueModule {
-    private OkHttpClient okHttp;
-    private Gson gson;
+    private final OkHttpClient okHttp;
+    private final Gson gson;
 
     public EQueueModule(OkHttpClient okHttp, Gson gson) {
         this.okHttp = okHttp;

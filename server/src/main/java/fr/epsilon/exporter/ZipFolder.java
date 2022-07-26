@@ -11,7 +11,7 @@ public class ZipFolder {
         try (
                 FileOutputStream fileWriter = new FileOutputStream(destination);
                 ZipOutputStream zip = new ZipOutputStream(fileWriter)
-        ){
+        ) {
             zip.setLevel(Deflater.NO_COMPRESSION);
 
             for (File file : files) {
@@ -24,7 +24,7 @@ public class ZipFolder {
         try (
                 FileOutputStream fileWriter = new FileOutputStream(destination);
                 ZipOutputStream zip = new ZipOutputStream(fileWriter)
-        ){
+        ) {
             zip.setLevel(Deflater.NO_COMPRESSION);
 
             addFileToZip(src, src, src.getPath().substring(1), zip);
@@ -56,7 +56,7 @@ public class ZipFolder {
             for (File listFile : file.listFiles()) {
                 addFileToZip(parent, listFile, listFile.getPath(), zip);
             }
-        }else {
+        } else {
             byte[] buf = new byte[1024];
             int len;
             try (FileInputStream in = new FileInputStream(file)) {

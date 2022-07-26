@@ -11,7 +11,7 @@ import net.md_5.bungee.api.plugin.Command;
 import java.util.List;
 
 public class HubCommand extends Command {
-    private EpsilonExporter main;
+    private final EpsilonExporter main;
 
     public HubCommand(EpsilonExporter main) {
         super("hub", null, "lobby");

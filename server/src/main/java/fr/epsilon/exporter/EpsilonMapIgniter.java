@@ -9,14 +9,16 @@ import okhttp3.ResponseBody;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class EpsilonMapIgniter {
-    private EpsilonExporter main;
+    private final EpsilonExporter main;
 
-    private ETemplate template;
-    private OkHttpClient client;
-    private File destination;
+    private final ETemplate template;
+    private final OkHttpClient client;
+    private final File destination;
 
     public EpsilonMapIgniter(EpsilonExporter main, ETemplate template) {
         this.main = main;
@@ -55,7 +57,7 @@ public class EpsilonMapIgniter {
                     ZipFolder.unzip(file, new File(destination, map));
                 }
             }
-        }catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

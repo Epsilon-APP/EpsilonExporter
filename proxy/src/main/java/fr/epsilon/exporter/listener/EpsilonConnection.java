@@ -1,7 +1,7 @@
 package fr.epsilon.exporter.listener;
 
-import fr.epsilon.common.template.ETemplate;
 import fr.epsilon.common.Epsilon;
+import fr.epsilon.common.template.ETemplate;
 import fr.epsilon.exporter.EpsilonExporter;
 import net.md_5.bungee.api.ReconnectHandler;
 import net.md_5.bungee.api.ServerPing;
@@ -18,8 +18,8 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 public class EpsilonConnection implements ReconnectHandler, Listener {
-    private EpsilonExporter main;
-    private ETemplate template;
+    private final EpsilonExporter main;
+    private final ETemplate template;
 
     public EpsilonConnection(EpsilonExporter main) {
         this.main = main;
@@ -60,7 +60,7 @@ public class EpsilonConnection implements ReconnectHandler, Listener {
         if (!hubs.isEmpty()) {
             event.setCancelServer(hubs.get(0));
             event.setCancelled(true);
-        }else {
+        } else {
             event.setKickReasonComponent(new TextComponent[]{getKickReason()});
         }
     }
@@ -86,13 +86,16 @@ public class EpsilonConnection implements ReconnectHandler, Listener {
     }
 
     @Override
-    public void setServer(ProxiedPlayer player) {}
+    public void setServer(ProxiedPlayer player) {
+    }
 
     @Override
-    public void save() {}
+    public void save() {
+    }
 
     @Override
-    public void close() {}
+    public void close() {
+    }
 
     private TextComponent getKickReason() {
         return new TextComponent("§cUn problème est survenu, veuillez réessayer !");
