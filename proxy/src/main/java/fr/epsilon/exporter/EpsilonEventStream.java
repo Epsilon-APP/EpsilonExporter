@@ -9,6 +9,7 @@ import java.time.Duration;
 
 public class EpsilonEventStream {
     private final EpsilonEventListener listener;
+
     private EventSource eventSource;
 
     private EpsilonEventStream(EpsilonExporter main) {
@@ -17,8 +18,8 @@ public class EpsilonEventStream {
         load();
     }
 
-    public static EpsilonEventStream init(EpsilonExporter main) {
-        return new EpsilonEventStream(main);
+    public static void init(EpsilonExporter main) {
+        new EpsilonEventStream(main);
     }
 
     private void load() {
