@@ -2,6 +2,7 @@ package fr.epsilon.exporter;
 
 import fr.epsilon.common.Epsilon;
 import fr.epsilon.common.template.ETemplate;
+import fr.epsilon.common.utils.EpsilonEnvironments;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -45,7 +46,7 @@ public class EpsilonMapIgniter {
 
     private void downloadAndExtract(String map) {
         try {
-            String url = Epsilon.get().getEpsilonTemplateURL("/maps/" + map + "/get");
+            String url = EpsilonEnvironments.getEpsilonTemplateURL("/maps/" + map + "/get");
 
             Request request = new Request.Builder().url(url).build();
             Response response = client.newCall(request).execute();

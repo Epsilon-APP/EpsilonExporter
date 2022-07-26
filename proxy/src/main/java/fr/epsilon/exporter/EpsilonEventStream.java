@@ -1,7 +1,7 @@
 package fr.epsilon.exporter;
 
 import com.launchdarkly.eventsource.EventSource;
-import fr.epsilon.common.Epsilon;
+import fr.epsilon.common.utils.EpsilonEnvironments;
 import fr.epsilon.exporter.listener.EpsilonEventListener;
 
 import java.net.URI;
@@ -23,7 +23,7 @@ public class EpsilonEventStream {
     }
 
     private void load() {
-        String url = Epsilon.get().getEpsilonURL("/api/events");
+        String url = EpsilonEnvironments.getEpsilonURL("/api/events");
         URI uri = URI.create(url);
 
         this.eventSource = new EventSource.Builder(listener, uri)
