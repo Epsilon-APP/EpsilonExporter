@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import fr.epsilon.common.instance.EState;
 import fr.epsilon.common.instance.EType;
 
-public class EpsilonInstanceStatus {
+public class EpsilonInstanceCRDStatus {
     public static final String SERIALIZED_NAME_IP = "ip";
 
     public static final String SERIALIZED_NAME_TEMPLATE = "template";

@@ -1,41 +1,33 @@
 package fr.epsilon.common.crd;
 
 import com.google.gson.annotations.SerializedName;
-import io.kubernetes.client.common.KubernetesListObject;
-import io.kubernetes.client.openapi.models.V1ListMeta;
+import io.kubernetes.client.common.KubernetesObject;
+import io.kubernetes.client.openapi.models.V1ObjectMeta;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class EpsilonInstanceList implements KubernetesListObject {
+public class EpsilonInstanceCRD implements KubernetesObject {
     public static final String SERIALIZED_NAME_API_VERSION = "apiVersion";
-
-    public static final String SERIALIZED_NAME_API_ITEMS = "items";
 
     public static final String SERIALIZED_NAME_KIND = "kind";
 
     public static final String SERIALIZED_NAME_METADATA = "metadata";
 
+    public static final String SERIALIZED_NAME_STATUS = "status";
+
     @SerializedName(SERIALIZED_NAME_API_VERSION)
     private String apiVersion;
-
-    @SerializedName(SERIALIZED_NAME_API_ITEMS)
-    private List<EpsilonInstance> items = new ArrayList<>();
 
     @SerializedName(SERIALIZED_NAME_KIND)
     private String kind;
 
     @SerializedName(SERIALIZED_NAME_METADATA)
-    private V1ListMeta metadata;
+    private V1ObjectMeta metadata;
+
+    @SerializedName(SERIALIZED_NAME_STATUS)
+    private EpsilonInstanceCRDStatus status;
 
     @Override
-    public V1ListMeta getMetadata() {
+    public V1ObjectMeta getMetadata() {
         return metadata;
-    }
-
-    @Override
-    public List<EpsilonInstance> getItems() {
-        return items;
     }
 
     @Override
@@ -46,5 +38,13 @@ public class EpsilonInstanceList implements KubernetesListObject {
     @Override
     public String getKind() {
         return kind;
+    }
+
+    public String getName() {
+        return metadata.getName();
+    }
+
+    public EpsilonInstanceCRDStatus getStatus() {
+        return status;
     }
 }

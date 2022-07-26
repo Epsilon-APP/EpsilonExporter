@@ -1,20 +1,17 @@
 package fr.epsilon.common;
 
 import com.google.gson.Gson;
-import fr.epsilon.common.crd.EpsilonInstance;
-import fr.epsilon.common.crd.EpsilonInstanceList;
+import fr.epsilon.common.crd.EpsilonInstanceCRD;
+import fr.epsilon.common.crd.EpsilonInstanceCRDList;
 import fr.epsilon.common.instance.EInstance;
-import fr.epsilon.common.instance.EInstanceList;
 import fr.epsilon.common.instance.EInstanceModule;
 import fr.epsilon.common.queue.EQueueModule;
 import fr.epsilon.common.template.ETemplate;
 import io.kubernetes.client.informer.SharedInformerFactory;
 import io.kubernetes.client.openapi.ApiClient;
-import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.util.Config;
 import io.kubernetes.client.util.generic.GenericKubernetesApi;
 import okhttp3.*;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -30,7 +27,7 @@ public class Epsilon {
     private final EQueueModule queueModule;
 
     private SharedInformerFactory informerFactory;
-    private GenericKubernetesApi<EpsilonInstance, EpsilonInstanceList> epsilonInstanceClient;
+    private GenericKubernetesApi<EpsilonInstanceCRD, EpsilonInstanceCRDList> epsilonInstanceClient;
 
     private ETemplate template;
 
@@ -39,7 +36,7 @@ public class Epsilon {
             ApiClient kubeClient = Config.defaultClient();
 
             this.informerFactory = new SharedInformerFactory(kubeClient);
-            this.epsilonInstanceClient = new GenericKubernetesApi<>(EpsilonInstance.class, EpsilonInstanceList.class, "controller.epsilon.fr", "v1", "epsiloninstances", kubeClient);
+            this.epsilonInstanceClient = new GenericKubernetesApi<>(EpsilonInstanceCRD.class, EpsilonInstanceCRDList.class, "controller.epsilon.fr", "v1", "epsiloninstances", kubeClient);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -70,7 +67,7 @@ public class Epsilon {
         return informerFactory;
     }
 
-    public GenericKubernetesApi<EpsilonInstance, EpsilonInstanceList> getEpsilonInstanceClient() {
+    public GenericKubernetesApi<EpsilonInstanceCRD, EpsilonInstanceCRDList> getEpsilonInstanceClient() {
         return epsilonInstanceClient;
     }
 

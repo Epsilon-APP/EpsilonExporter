@@ -1,9 +1,9 @@
 package fr.epsilon.exporter.listener;
 
 import fr.epsilon.common.Epsilon;
-import fr.epsilon.common.crd.EpsilonInstance;
-import fr.epsilon.common.crd.EpsilonInstanceList;
-import fr.epsilon.common.crd.EpsilonInstanceStatus;
+import fr.epsilon.common.crd.EpsilonInstanceCRD;
+import fr.epsilon.common.crd.EpsilonInstanceCRDList;
+import fr.epsilon.common.crd.EpsilonInstanceCRDStatus;
 import fr.epsilon.common.instance.EState;
 import fr.epsilon.common.instance.EType;
 import fr.epsilon.exporter.EpsilonExporter;
@@ -51,31 +51,31 @@ public class EpsilonRegister {
     }
 
     public void runInformer() {
-        GenericKubernetesApi<EpsilonInstance, EpsilonInstanceList> epsilonInstanceClient = Epsilon.get().getEpsilonInstanceClient();
+        GenericKubernetesApi<EpsilonInstanceCRD, EpsilonInstanceCRDList> epsilonInstanceClient = Epsilon.get().getEpsilonInstanceClient();
         SharedInformerFactory informerFactory = Epsilon.get().getInformerFactory();
-        SharedInformer<EpsilonInstance> instanceInformer = informerFactory.sharedIndexInformerFor(epsilonInstanceClient,
-                EpsilonInstance.class, TimeUnit.MINUTES.toMillis(10), namespace);
+        SharedInformer<EpsilonInstanceCRD> instanceInformer = informerFactory.sharedIndexInformerFor(epsilonInstanceClient,
+                EpsilonInstanceCRD.class, TimeUnit.MINUTES.toMillis(10), namespace);
 
         try {
-            KubernetesApiResponse<EpsilonInstanceList> instanceList = epsilonInstanceClient.list(namespace).throwsApiException();
-            for (EpsilonInstance instance : instanceList.getObject().getItems())
+            KubernetesApiResponse<EpsilonInstanceCRDList> instanceList = epsilonInstanceClient.list(namespace).throwsApiException();
+            for (EpsilonInstanceCRD instance : instanceList.getObject().getItems())
                 registerInstance(instance);
         } catch (ApiException e) {
             e.printStackTrace();
         }
 
-        instanceInformer.addEventHandlerWithResyncPeriod(new ResourceEventHandler<EpsilonInstance>() {
+        instanceInformer.addEventHandlerWithResyncPeriod(new ResourceEventHandler<EpsilonInstanceCRD>() {
             @Override
-            public void onAdd(EpsilonInstance instance) {
+            public void onAdd(EpsilonInstanceCRD instance) {
             }
 
             @Override
-            public void onUpdate(EpsilonInstance oldInstance, EpsilonInstance newInstance) {
+            public void onUpdate(EpsilonInstanceCRD oldInstance, EpsilonInstanceCRD newInstance) {
                 registerInstance(newInstance);
             }
 
             @Override
-            public void onDelete(EpsilonInstance instance, boolean deletedFinalStateUnknown) {
+            public void onDelete(EpsilonInstanceCRD instance, boolean deletedFinalStateUnknown) {
                 V1ObjectMeta metadata = instance.getMetadata();
                 String name = metadata.getName();
 
@@ -92,8 +92,8 @@ public class EpsilonRegister {
                 .collect(Collectors.toList());
     }
 
-    private void registerInstance(EpsilonInstance instance) {
-        EpsilonInstanceStatus status = instance.getStatus();
+    private void registerInstance(EpsilonInstanceCRD instance) {
+        EpsilonInstanceCRDStatus status = instance.getStatus();
 
         if (status != null) {
             String name = instance.getName();
