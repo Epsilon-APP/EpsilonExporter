@@ -1,6 +1,9 @@
 package fr.epsilon.common.crd;
 
 import com.google.gson.annotations.SerializedName;
+import fr.epsilon.common.instance.EInstance;
+import fr.epsilon.common.instance.EState;
+import fr.epsilon.common.instance.EType;
 import io.kubernetes.client.common.KubernetesObject;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
 
@@ -46,5 +49,27 @@ public class EpsilonInstanceCRD implements KubernetesObject {
 
     public EpsilonInstanceCRDStatus getStatus() {
         return status;
+    }
+
+    public EInstance getInstance() {
+        if (getStatus() != null) {
+            String template = getStatus().getTemplate();
+
+            String content = getStatus().getContent();
+
+            boolean hub = getStatus().isHub();
+
+            EType type = getStatus().getType();
+            EState state = getStatus().getState();
+
+            int slots = getStatus().getSlots();
+            int onlineCount = getStatus().getOnlineCount();
+
+            String ip = getStatus().getIp();
+
+            return new EInstance(getName(), template, content, hub, type, state, slots, onlineCount, ip);
+        }
+
+        return null;
     }
 }

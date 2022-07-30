@@ -25,7 +25,7 @@ public class EpsilonExporter extends Plugin {
         getProxy().getServers().clear();
 
         this.register = new EpsilonRegister(this);
-        register.runInformer();
+        register.run();
 
         EpsilonEventStream.init(this);
 

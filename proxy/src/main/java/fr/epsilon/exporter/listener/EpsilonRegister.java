@@ -1,89 +1,50 @@
 package fr.epsilon.exporter.listener;
 
 import fr.epsilon.common.Epsilon;
-import fr.epsilon.common.crd.EpsilonInstanceCRD;
-import fr.epsilon.common.crd.EpsilonInstanceCRDList;
-import fr.epsilon.common.crd.EpsilonInstanceCRDStatus;
+import fr.epsilon.common.InstanceInformer;
+import fr.epsilon.common.InstanceInformerListener;
+import fr.epsilon.common.instance.EInstance;
 import fr.epsilon.common.instance.EState;
 import fr.epsilon.common.instance.EType;
 import fr.epsilon.exporter.EpsilonExporter;
-import io.kubernetes.client.informer.ResourceEventHandler;
-import io.kubernetes.client.informer.SharedInformer;
-import io.kubernetes.client.informer.SharedInformerFactory;
-import io.kubernetes.client.openapi.ApiException;
-import io.kubernetes.client.openapi.models.V1ObjectMeta;
-import io.kubernetes.client.util.generic.GenericKubernetesApi;
-import io.kubernetes.client.util.generic.KubernetesApiResponse;
 import net.md_5.bungee.api.config.ServerInfo;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class EpsilonRegister {
     private final EpsilonExporter main;
     private final ConcurrentMap<String, ServerInfo> hubs;
 
-    private String namespace;
+    private final InstanceInformer instanceInformer;
 
     public EpsilonRegister(EpsilonExporter main) {
         this.main = main;
         this.hubs = new ConcurrentHashMap<>();
 
-        Path namespacePath = Paths.get("/var/run/secrets/kubernetes.io/serviceaccount/namespace");
-
-        try (Stream<String> lines = Files.lines(namespacePath)) {
-            this.namespace = lines.collect(Collectors.joining(System.lineSeparator()));
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.instanceInformer = Epsilon.get().runInstanceInformer();
     }
 
-    public void runInformer() {
-        GenericKubernetesApi<EpsilonInstanceCRD, EpsilonInstanceCRDList> epsilonInstanceClient = Epsilon.get().getEpsilonInstanceClient();
-        SharedInformerFactory informerFactory = Epsilon.get().getInformerFactory();
-        SharedInformer<EpsilonInstanceCRD> instanceInformer = informerFactory.sharedIndexInformerFor(epsilonInstanceClient,
-                EpsilonInstanceCRD.class, TimeUnit.MINUTES.toMillis(10), namespace);
+    public void run() {
+        for (EInstance instance : instanceInformer.getInstances())
+            registerInstance(instance);
 
-        try {
-            KubernetesApiResponse<EpsilonInstanceCRDList> instanceList = epsilonInstanceClient.list(namespace).throwsApiException();
-            for (EpsilonInstanceCRD instance : instanceList.getObject().getItems())
+        instanceInformer.registerListener(new InstanceInformerListener() {
+            @Override
+            public void onInstanceUpdate(EInstance instance) {
                 registerInstance(instance);
-        } catch (ApiException e) {
-            e.printStackTrace();
-        }
-
-        instanceInformer.addEventHandlerWithResyncPeriod(new ResourceEventHandler<EpsilonInstanceCRD>() {
-            @Override
-            public void onAdd(EpsilonInstanceCRD instance) {
             }
 
             @Override
-            public void onUpdate(EpsilonInstanceCRD oldInstance, EpsilonInstanceCRD newInstance) {
-                registerInstance(newInstance);
+            public void onInstanceRemove(EInstance instance) {
+                unregisterInstance(instance);
             }
-
-            @Override
-            public void onDelete(EpsilonInstanceCRD instance, boolean deletedFinalStateUnknown) {
-                V1ObjectMeta metadata = instance.getMetadata();
-                String name = metadata.getName();
-
-                unregisterServer(name);
-            }
-        }, TimeUnit.MINUTES.toMillis(10));
-
-        instanceInformer.run();
+        });
     }
 
     public List<ServerInfo> getHubs() {
@@ -92,35 +53,36 @@ public class EpsilonRegister {
                 .collect(Collectors.toList());
     }
 
-    private void registerInstance(EpsilonInstanceCRD instance) {
-        EpsilonInstanceCRDStatus status = instance.getStatus();
+    private void registerInstance(EInstance instance) {
+        String name = instance.getName();
 
-        if (status != null) {
-            String name = instance.getName();
+        boolean isHub = instance.isHub();
 
-            EType type = status.getType();
-            EState state = status.getState();
-            String ip = status.getIp();
+        EType type = instance.getType();
+        EState state = instance.getState();
 
-            if (type == EType.Server && state == EState.Running) {
-                ServerInfo server = main.getProxy().constructServerInfo(name,
-                        new InetSocketAddress(Objects.requireNonNull(ip), 25565),
-                        "",
-                        false);
+        String ip = instance.getIp();
 
-                main.getProxy().getServers().put(name, server);
+        if (type == EType.Server && state == EState.Running) {
+            ServerInfo server = main.getProxy().constructServerInfo(name,
+                    new InetSocketAddress(Objects.requireNonNull(ip), 25565),
+                    "",
+                    false);
 
-                if (status.isHub())
-                    hubs.put(name, server);
-                else
-                    hubs.remove(name, server);
+            main.getProxy().getServers().put(name, server);
 
-                main.getLogger().info("Add server " + name);
-            }
+            if (isHub)
+                hubs.put(name, server);
+            else
+                hubs.remove(name, server);
+
+            main.getLogger().info("Add server " + name);
         }
     }
 
-    private void unregisterServer(String name) {
+    private void unregisterInstance(EInstance instance) {
+        String name = instance.getName();
+
         main.getProxy().getServers().remove(name);
 
         hubs.remove(name);

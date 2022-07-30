@@ -7,16 +7,29 @@ import fr.epsilon.common.instance.EInstance;
 import fr.epsilon.common.instance.EInstanceModule;
 import fr.epsilon.common.queue.EQueueModule;
 import fr.epsilon.common.template.ETemplate;
+import io.kubernetes.client.informer.ResourceEventHandler;
+import io.kubernetes.client.informer.SharedIndexInformer;
+import io.kubernetes.client.informer.SharedInformer;
 import io.kubernetes.client.informer.SharedInformerFactory;
+import io.kubernetes.client.informer.cache.Lister;
 import io.kubernetes.client.openapi.ApiClient;
+import io.kubernetes.client.openapi.ApiException;
+import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import io.kubernetes.client.util.Config;
 import io.kubernetes.client.util.generic.GenericKubernetesApi;
+import io.kubernetes.client.util.generic.KubernetesApiResponse;
 import okhttp3.*;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Epsilon {
     private static Epsilon singleton;
@@ -26,17 +39,29 @@ public class Epsilon {
     private final EInstanceModule instanceModule;
     private final EQueueModule queueModule;
 
+    private String namespace;
+
     private SharedInformerFactory informerFactory;
-    private GenericKubernetesApi<EpsilonInstanceCRD, EpsilonInstanceCRDList> epsilonInstanceClient;
+    private InstanceInformer instanceInformer;
 
     private ETemplate template;
 
     public Epsilon() {
+        Path namespacePath = Paths.get("/var/run/secrets/kubernetes.io/serviceaccount/namespace");
+
+        try (Stream<String> lines = Files.lines(namespacePath)) {
+            this.namespace = lines.collect(Collectors.joining(System.lineSeparator()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         try {
             ApiClient kubeClient = Config.defaultClient();
+            GenericKubernetesApi<EpsilonInstanceCRD, EpsilonInstanceCRDList> epsilonInstanceClient =
+                    new GenericKubernetesApi<>(EpsilonInstanceCRD.class, EpsilonInstanceCRDList.class, "controller.epsilon" + ".fr", "v1", "epsiloninstances", kubeClient);
 
             this.informerFactory = new SharedInformerFactory(kubeClient);
-            this.epsilonInstanceClient = new GenericKubernetesApi<>(EpsilonInstanceCRD.class, EpsilonInstanceCRDList.class, "controller.epsilon.fr", "v1", "epsiloninstances", kubeClient);
+            this.instanceInformer = new InstanceInformer(namespace, informerFactory, epsilonInstanceClient);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -63,12 +88,10 @@ public class Epsilon {
         return singleton;
     }
 
-    public SharedInformerFactory getInformerFactory() {
-        return informerFactory;
-    }
+    public InstanceInformer runInstanceInformer() {
+        informerFactory.startAllRegisteredInformers();
 
-    public GenericKubernetesApi<EpsilonInstanceCRD, EpsilonInstanceCRDList> getEpsilonInstanceClient() {
-        return epsilonInstanceClient;
+        return instanceInformer;
     }
 
     public String name() {

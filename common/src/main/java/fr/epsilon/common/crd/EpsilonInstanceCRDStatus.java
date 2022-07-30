@@ -19,7 +19,7 @@ public class EpsilonInstanceCRDStatus {
 
     public static final String SERIALIZED_NAME_SLOTS = "slots";
 
-    public static final String SERIALIZED_NAME_CLOSE = "close";
+    public static final String SERIALIZED_NAME_ONLINE = "online";
 
     @SerializedName(SERIALIZED_NAME_IP)
     private String ip = null;
@@ -42,8 +42,8 @@ public class EpsilonInstanceCRDStatus {
     @SerializedName(SERIALIZED_NAME_SLOTS)
     private Integer slots = null;
 
-    @SerializedName(SERIALIZED_NAME_CLOSE)
-    private Boolean close = null;
+    @SerializedName(SERIALIZED_NAME_ONLINE)
+    private Integer online = null;
 
     public String getIp() {
         return ip;
@@ -73,7 +73,7 @@ public class EpsilonInstanceCRDStatus {
         return slots;
     }
 
-    public Boolean isClose() {
-        return close;
+    public Integer getOnlineCount() {
+        return online;
     }
 }
