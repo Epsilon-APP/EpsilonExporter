@@ -1,6 +1,5 @@
-package fr.epsilon.common;
+package fr.epsilon.common.informer;
 
-import fr.epsilon.common.crd.EpsilonInstanceCRD;
 import fr.epsilon.common.instance.EInstance;
 
 public interface InstanceInformerListener {

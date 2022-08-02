@@ -6,6 +6,7 @@ import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 
 public class EInstanceModule {
@@ -21,7 +22,7 @@ public class EInstanceModule {
         CompletableFuture<EInstance> future = new CompletableFuture<>();
 
         Request request = new Request.Builder()
-                .url(EpsilonEnvironments.getEpsilonURL("/instance/get_from_name/" + instance))
+                .url(EpsilonEnvironments.getEpsilonURL("/instance/get/" + instance))
                 .build();
 
         okHttp.newCall(request).enqueue(new Callback() {
@@ -46,30 +47,39 @@ public class EInstanceModule {
         return future;
     }
 
+    public CompletableFuture<EInstance[]> getInstances() {
+        CompletableFuture<EInstance[]> future = new CompletableFuture<>();
+
+        Request request = new Request.Builder()
+                .url(EpsilonEnvironments.getEpsilonURL("/instance/get_all"))
+                .build();
+
+        getInstances(future, request);
+
+        return future;
+    }
+
     public CompletableFuture<EInstance[]> getInstances(String template) {
         CompletableFuture<EInstance[]> future = new CompletableFuture<>();
 
         Request request = new Request.Builder()
-                .url(EpsilonEnvironments.getEpsilonURL("/instance" + (template != null ? "/get/" + template : "/get_all")))
+                .url(EpsilonEnvironments.getEpsilonURL("/instance/get_from_template/" + template))
                 .build();
 
-        okHttp.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                e.printStackTrace();
-            }
+        getInstances(future, request);
 
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                try (ResponseBody body = response.body()) {
-                    if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+        return future;
+    }
 
-                    assert body != null;
-                    EInstanceList instances = gson.fromJson(body.string(), EInstanceList.class);
+    public CompletableFuture<EInstance[]> getInstances(EType type) {
+        CompletableFuture<EInstance[]> future = new CompletableFuture<>();
 
-                    future.complete(instances.getInstances());
-                }
-            }
+        getInstances().whenCompleteAsync((instances, error) -> {
+            EInstance[] array = Arrays.stream(instances)
+                    .filter(instance -> instance.getType() == type)
+                    .toArray(EInstance[]::new);
+
+            future.complete(array);
         });
 
         return future;
@@ -133,5 +143,26 @@ public class EInstanceModule {
         }
 
         return false;
+    }
+
+    private void getInstances(CompletableFuture<EInstance[]> future, Request request) {
+        okHttp.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody body = response.body()) {
+                    if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+
+                    assert body != null;
+                    EInstanceList instances = gson.fromJson(body.string(), EInstanceList.class);
+
+                    future.complete(instances.getInstances());
+                }
+            }
+        });
     }
 }

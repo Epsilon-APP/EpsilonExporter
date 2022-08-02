@@ -1,8 +1,8 @@
 package fr.epsilon.exporter.listener;
 
 import fr.epsilon.common.Epsilon;
-import fr.epsilon.common.InstanceInformer;
-import fr.epsilon.common.InstanceInformerListener;
+import fr.epsilon.common.informer.InstanceInformer;
+import fr.epsilon.common.informer.InstanceInformerListener;
 import fr.epsilon.common.instance.EInstance;
 import fr.epsilon.common.instance.EState;
 import fr.epsilon.common.instance.EType;

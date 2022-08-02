@@ -1,8 +1,9 @@
-package fr.epsilon.common;
+package fr.epsilon.common.informer;
 
 import fr.epsilon.common.crd.EpsilonInstanceCRD;
 import fr.epsilon.common.crd.EpsilonInstanceCRDList;
 import fr.epsilon.common.instance.EInstance;
+import fr.epsilon.common.instance.EType;
 import io.kubernetes.client.informer.ResourceEventHandler;
 import io.kubernetes.client.informer.SharedIndexInformer;
 import io.kubernetes.client.informer.SharedInformerFactory;
@@ -10,6 +11,7 @@ import io.kubernetes.client.informer.cache.Lister;
 import io.kubernetes.client.util.generic.GenericKubernetesApi;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -55,10 +57,22 @@ public class InstanceInformer {
         return instanceStore.get(name).getInstance();
     }
 
-    public List<EInstance> getInstances() {
+    public EInstance[] getInstances() {
         return instanceStore.list().stream()
                 .map(EpsilonInstanceCRD::getInstance)
-                .collect(Collectors.toList());
+                .toArray(EInstance[]::new);
+    }
+
+    public EInstance[] getInstances(String template) {
+        return Arrays.stream(getInstances())
+                .filter(instance -> instance.getTemplate().equals(template))
+                .toArray(EInstance[]::new);
+    }
+
+    public EInstance[] getInstances(EType type) {
+        return Arrays.stream(getInstances())
+                .filter(instance -> instance.getType() == type)
+                .toArray(EInstance[]::new);
     }
 
     public void registerListener(InstanceInformerListener listener) {

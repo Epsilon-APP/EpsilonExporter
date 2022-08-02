@@ -3,21 +3,15 @@ package fr.epsilon.common;
 import com.google.gson.Gson;
 import fr.epsilon.common.crd.EpsilonInstanceCRD;
 import fr.epsilon.common.crd.EpsilonInstanceCRDList;
+import fr.epsilon.common.informer.InstanceInformer;
 import fr.epsilon.common.instance.EInstance;
 import fr.epsilon.common.instance.EInstanceModule;
 import fr.epsilon.common.queue.EQueueModule;
 import fr.epsilon.common.template.ETemplate;
-import io.kubernetes.client.informer.ResourceEventHandler;
-import io.kubernetes.client.informer.SharedIndexInformer;
-import io.kubernetes.client.informer.SharedInformer;
 import io.kubernetes.client.informer.SharedInformerFactory;
-import io.kubernetes.client.informer.cache.Lister;
 import io.kubernetes.client.openapi.ApiClient;
-import io.kubernetes.client.openapi.ApiException;
-import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import io.kubernetes.client.util.Config;
 import io.kubernetes.client.util.generic.GenericKubernetesApi;
-import io.kubernetes.client.util.generic.KubernetesApiResponse;
 import okhttp3.*;
 
 import java.io.FileReader;
@@ -26,7 +20,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -58,7 +51,7 @@ public class Epsilon {
         try {
             ApiClient kubeClient = Config.defaultClient();
             GenericKubernetesApi<EpsilonInstanceCRD, EpsilonInstanceCRDList> epsilonInstanceClient =
-                    new GenericKubernetesApi<>(EpsilonInstanceCRD.class, EpsilonInstanceCRDList.class, "controller.epsilon" + ".fr", "v1", "epsiloninstances", kubeClient);
+                    new GenericKubernetesApi<>(EpsilonInstanceCRD.class, EpsilonInstanceCRDList.class, "controller.epsilon.fr", "v1", "epsiloninstances", kubeClient);
 
             this.informerFactory = new SharedInformerFactory(kubeClient);
             this.instanceInformer = new InstanceInformer(namespace, informerFactory, epsilonInstanceClient);
