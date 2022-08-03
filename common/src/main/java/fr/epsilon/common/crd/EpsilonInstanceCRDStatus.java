@@ -34,7 +34,7 @@ public class EpsilonInstanceCRDStatus {
     private Boolean hub = null;
 
     @SerializedName(SERIALIZED_NAME_CONTENT)
-    private Object content = null;
+    private String content = null;
 
     @SerializedName(SERIALIZED_NAME_STATE)
     private EState state = null;
@@ -61,7 +61,7 @@ public class EpsilonInstanceCRDStatus {
         return hub;
     }
 
-    public Object getContent() {
+    public String getContent() {
         return content;
     }
 

@@ -9,7 +9,7 @@ public class EInstance {
     private String name;
     private String template;
 
-    private Object content;
+    private String content;
 
     private boolean hub;
 
@@ -21,7 +21,7 @@ public class EInstance {
 
     private String ip;
 
-    public EInstance(String name, String template, Object content, boolean hub, EType type, EState state, int slots, int online_count, String ip) {
+    public EInstance(String name, String template, String content, boolean hub, EType type, EState state, int slots, int online_count, String ip) {
         this.name = name;
         this.template = template;
 
@@ -47,7 +47,7 @@ public class EInstance {
     }
 
     public <T> T getContent(Class<T> classType) {
-        return gson.fromJson(gson.toJson(content), classType);
+        return gson.fromJson(content, classType);
     }
 
     public boolean isHub() {
