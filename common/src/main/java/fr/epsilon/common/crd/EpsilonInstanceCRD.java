@@ -55,7 +55,7 @@ public class EpsilonInstanceCRD implements KubernetesObject {
         if (getStatus() != null) {
             String template = getStatus().getTemplate();
 
-            String content = getStatus().getContent();
+            Object content = getStatus().getContent();
 
             boolean hub = getStatus().isHub();
 

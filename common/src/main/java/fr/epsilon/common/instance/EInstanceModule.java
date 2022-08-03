@@ -86,9 +86,16 @@ public class EInstanceModule {
     }
 
     public boolean openInstance(String template) {
+        return openInstance(template, new Object());
+    }
+
+    public <T> boolean openInstance(String template, T content) {
+        MediaType media = MediaType.parse("application/json; charset=utf-8");
+        RequestBody body = RequestBody.create(gson.toJson(content), media);
+
         Request request = new Request.Builder()
                 .url(EpsilonEnvironments.getEpsilonURL("/instance/create/" + template))
-                .post(RequestBody.create(new byte[]{}))
+                .post(body)
                 .build();
 
         try {

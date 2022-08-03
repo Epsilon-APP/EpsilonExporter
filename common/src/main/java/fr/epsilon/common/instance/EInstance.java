@@ -1,12 +1,15 @@
 package fr.epsilon.common.instance;
 
+import com.google.gson.Gson;
 import fr.epsilon.common.Epsilon;
 
 public class EInstance {
+    private static final Gson gson = new Gson();
+
     private String name;
     private String template;
 
-    private String content;
+    private Object content;
 
     private boolean hub;
 
@@ -18,15 +21,20 @@ public class EInstance {
 
     private String ip;
 
-    public EInstance(String name, String template, String content, boolean hub, EType type, EState state, int slots, int online_count, String ip) {
+    public EInstance(String name, String template, Object content, boolean hub, EType type, EState state, int slots, int online_count, String ip) {
         this.name = name;
         this.template = template;
+
         this.content = content;
+
         this.hub = hub;
+
         this.type = type;
         this.state = state;
+
         this.slots = slots;
         this.online_count = online_count;
+
         this.ip = ip;
     }
 
@@ -38,8 +46,8 @@ public class EInstance {
         return template;
     }
 
-    public String getContent() {
-        return content;
+    public <T> T getContent(Class<T> classType) {
+        return gson.fromJson(gson.toJson(content), classType);
     }
 
     public boolean isHub() {
