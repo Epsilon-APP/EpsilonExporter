@@ -6,8 +6,7 @@ repositories {
 dependencies {
     compileOnly group: 'net.md-5', name: 'bungeecord-api', version: '1.15-SNAPSHOT'
 
-    implementation 'com.launchdarkly:okhttp-eventsource:2.5.0'
-    implementation 'io.kubernetes:client-java:14.0.0'
+    implementation 'com.launchdarkly:okhttp-eventsource:2.6.2'
 
     implementation project(":epsilon-exporter-common")
 }

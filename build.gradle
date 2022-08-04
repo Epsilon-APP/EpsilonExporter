@@ -28,6 +28,10 @@ subprojects {
         mavenCentral()
     }
 
+    jar {
+        archiveFileName = "${project.name}.jar"
+    }
+
     shadowJar {
         archiveFileName = "${baseName}-${classifier}.${extension}"
     }
