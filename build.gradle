@@ -14,6 +14,8 @@ buildscript {
 }
 
 subprojects {
+    apply plugin: 'maven-publish'
+
     apply plugin: 'com.github.johnrengelman.shadow'
     apply plugin: 'java'
 
@@ -28,8 +30,20 @@ subprojects {
         mavenCentral()
     }
 
-    jar {
-        archiveFileName = "${project.name}.jar"
+    java {
+        withSourcesJar()
+        withJavadocJar()
+    }
+
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                groupId project.group
+                artifactId project.name
+                version project.version
+                from components.java
+            }
+        }
     }
 
     shadowJar {
