@@ -1,6 +1,6 @@
 rootProject.name = 'epsilon-exporter'
 
-['common', 'proxy', 'server'].each {
+['api', 'common', 'proxy', 'server'].each {
     include ":epsilon-exporter-${it}"
     project(":epsilon-exporter-${it}").projectDir = file(it)
 }

@@ -1,19 +1,18 @@
 package fr.epsilon.common.template;
 
-public class EResources {
+import fr.epsilon.api.template.EResources;
+
+public class Resources extends EResources {
     private EResource minimum;
     private EResource maximum;
 
+    @Override
     public EResource getMinimum() {
         return minimum;
     }
 
+    @Override
     public EResource getMaximum() {
         return maximum;
-    }
-
-    public static class EResource {
-        private int cpu;
-        private int ram;
     }
 }

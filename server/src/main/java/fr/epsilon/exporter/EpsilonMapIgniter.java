@@ -1,7 +1,6 @@
 package fr.epsilon.exporter;
 
-import fr.epsilon.common.Epsilon;
-import fr.epsilon.common.template.ETemplate;
+import fr.epsilon.common.template.Template;
 import fr.epsilon.common.utils.EpsilonEnvironments;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -17,11 +16,11 @@ import java.io.InputStream;
 public class EpsilonMapIgniter {
     private final EpsilonExporter main;
 
-    private final ETemplate template;
+    private final Template template;
     private final OkHttpClient client;
     private final File destination;
 
-    public EpsilonMapIgniter(EpsilonExporter main, ETemplate template) {
+    public EpsilonMapIgniter(EpsilonExporter main, Template template) {
         this.main = main;
 
         this.template = template;

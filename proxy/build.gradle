@@ -8,5 +8,6 @@ dependencies {
 
     implementation 'com.launchdarkly:okhttp-eventsource:2.6.2'
 
+    implementation project(":epsilon-exporter-api")
     implementation project(":epsilon-exporter-common")
 }

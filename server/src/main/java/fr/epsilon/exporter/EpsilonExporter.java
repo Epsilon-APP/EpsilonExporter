@@ -1,7 +1,7 @@
 package fr.epsilon.exporter;
 
 import fr.epsilon.common.Epsilon;
-import fr.epsilon.common.template.ETemplate;
+import fr.epsilon.common.template.Template;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
@@ -14,7 +14,9 @@ import java.nio.file.Paths;
 public class EpsilonExporter extends JavaPlugin {
     @Override
     public void onEnable() {
-        ETemplate template = Epsilon.get().template();
+        Epsilon epsilon = Epsilon.get();
+
+        Template template = epsilon.template();
 
         getServer().getLogger().info("Download map ...");
 

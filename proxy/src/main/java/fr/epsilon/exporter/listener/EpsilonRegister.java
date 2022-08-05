@@ -1,11 +1,11 @@
 package fr.epsilon.exporter.listener;
 
-import fr.epsilon.common.Epsilon;
+import fr.epsilon.api.informer.EInstanceInformerListener;
+import fr.epsilon.api.instance.EInstance;
+import fr.epsilon.api.instance.EState;
+import fr.epsilon.api.instance.EType;
 import fr.epsilon.common.informer.InstanceInformer;
-import fr.epsilon.common.informer.InstanceInformerListener;
-import fr.epsilon.common.instance.EInstance;
-import fr.epsilon.common.instance.EState;
-import fr.epsilon.common.instance.EType;
+import fr.epsilon.common.instance.Instance;
 import fr.epsilon.exporter.EpsilonExporter;
 import net.md_5.bungee.api.config.ServerInfo;
 
@@ -27,14 +27,14 @@ public class EpsilonRegister {
         this.main = main;
         this.hubs = new ConcurrentHashMap<>();
 
-        this.instanceInformer = Epsilon.get().runInstanceInformer();
+        this.instanceInformer = main.getEpsilon().runInstanceInformer();
     }
 
     public void run() {
-        for (EInstance instance : instanceInformer.getInstances())
+        for (Instance instance : instanceInformer.getInstances())
             registerInstance(instance);
 
-        instanceInformer.registerListener(new InstanceInformerListener() {
+        instanceInformer.registerListener(new EInstanceInformerListener() {
             @Override
             public void onInstanceUpdate(EInstance instance) {
                 registerInstance(instance);
@@ -61,7 +61,7 @@ public class EpsilonRegister {
         EType type = instance.getType();
         EState state = instance.getState();
 
-        String ip = instance.getIp();
+        String ip = instance.getLocalIp();
 
         if (type == EType.Server && state == EState.Running) {
             ServerInfo server = main.getProxy().constructServerInfo(name,

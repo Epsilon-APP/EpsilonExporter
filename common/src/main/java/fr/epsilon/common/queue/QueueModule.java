@@ -1,6 +1,7 @@
 package fr.epsilon.common.queue;
 
 import com.google.gson.Gson;
+import fr.epsilon.api.queue.EQueueModule;
 import fr.epsilon.common.utils.EpsilonEnvironments;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -12,21 +13,23 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 
-public class EQueueModule {
+public class QueueModule extends EQueueModule {
     private final OkHttpClient okHttp;
     private final Gson gson;
 
-    public EQueueModule(OkHttpClient okHttp, Gson gson) {
+    public QueueModule(OkHttpClient okHttp, Gson gson) {
         this.okHttp = okHttp;
         this.gson = gson;
     }
 
+    @Override
     public boolean join(String username, String queue) {
         return join(Collections.singletonList(username), queue);
     }
 
+    @Override
     public boolean join(List<String> players, String queue) {
-        EQueuePlayer queuePlayer = new EQueuePlayer(players, queue);
+        QueuePlayer queuePlayer = new QueuePlayer(players, queue);
         byte[] json = gson.toJson(queuePlayer).getBytes(StandardCharsets.UTF_8);
 
         Request request = new Request.Builder()

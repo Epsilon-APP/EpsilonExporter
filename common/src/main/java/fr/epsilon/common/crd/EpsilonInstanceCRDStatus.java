@@ -1,8 +1,8 @@
 package fr.epsilon.common.crd;
 
 import com.google.gson.annotations.SerializedName;
-import fr.epsilon.common.instance.EState;
-import fr.epsilon.common.instance.EType;
+import fr.epsilon.api.instance.EState;
+import fr.epsilon.api.instance.EType;
 
 public class EpsilonInstanceCRDStatus {
     public static final String SERIALIZED_NAME_IP = "ip";

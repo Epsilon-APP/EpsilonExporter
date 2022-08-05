@@ -1,49 +1,60 @@
 package fr.epsilon.common.template;
 
+import fr.epsilon.api.instance.EType;
+import fr.epsilon.api.template.ETemplate;
+
 import java.util.Map;
 
-public class ETemplate {
+public class Template extends ETemplate {
     private String name;
     private String parent;
-    private String type;
+    private EType type;
 
     private int slots;
 
     private String default_map;
     private String[] maps;
 
-    private EResources resources;
+    private Resources resources;
 
     private Map<String, String> labels;
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public String getParent() {
         return parent;
     }
 
-    public String getType() {
+    @Override
+    public EType getType() {
         return type;
     }
 
+    @Override
     public int getSlots() {
         return slots;
     }
 
+    @Override
     public String getDefaultMap() {
         return default_map;
     }
 
+    @Override
     public String[] getMaps() {
         return maps;
     }
 
-    public EResources getResources() {
+    @Override
+    public Resources getResources() {
         return resources;
     }
 
+    @Override
     public Map<String, String> getLabels() {
         return labels;
     }

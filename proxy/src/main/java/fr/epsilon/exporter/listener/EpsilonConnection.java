@@ -1,7 +1,6 @@
 package fr.epsilon.exporter.listener;
 
-import fr.epsilon.common.Epsilon;
-import fr.epsilon.common.template.ETemplate;
+import fr.epsilon.common.template.Template;
 import fr.epsilon.exporter.EpsilonExporter;
 import net.md_5.bungee.api.ReconnectHandler;
 import net.md_5.bungee.api.ServerPing;
@@ -19,11 +18,11 @@ import java.util.List;
 
 public class EpsilonConnection implements ReconnectHandler, Listener {
     private final EpsilonExporter main;
-    private final ETemplate template;
+    private final Template template;
 
     public EpsilonConnection(EpsilonExporter main) {
         this.main = main;
-        this.template = Epsilon.get().template();
+        this.template = main.getEpsilon().template();
 
         try {
             Class<?> configClass = main.getProxy().getConfig().getClass();

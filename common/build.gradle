@@ -3,8 +3,6 @@ dependencies {
     implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.9.3'
 
     compileOnly group: 'com.google.code.gson', name: 'gson', version: '2.9.0'
-}
 
-jar {
-    archiveFileName = "epsilon-api.jar"
+    implementation project(":epsilon-exporter-api")
 }

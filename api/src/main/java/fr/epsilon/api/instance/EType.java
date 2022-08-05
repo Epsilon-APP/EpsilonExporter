@@ -1,4 +1,4 @@
-package fr.epsilon.common.instance;
+package fr.epsilon.api.instance;
 
 public enum EType {
     Server, Proxy

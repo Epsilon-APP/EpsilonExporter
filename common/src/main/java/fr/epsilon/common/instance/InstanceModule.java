@@ -1,6 +1,8 @@
 package fr.epsilon.common.instance;
 
 import com.google.gson.Gson;
+import fr.epsilon.api.instance.EInstanceModule;
+import fr.epsilon.api.instance.EType;
 import fr.epsilon.common.utils.EpsilonEnvironments;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
@@ -9,20 +11,21 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 
-public class EInstanceModule {
+public class InstanceModule extends EInstanceModule {
     private final OkHttpClient okHttp;
     private final Gson gson;
 
-    public EInstanceModule(OkHttpClient okHttp, Gson gson) {
+    public InstanceModule(OkHttpClient okHttp, Gson gson) {
         this.okHttp = okHttp;
         this.gson = gson;
     }
 
-    public CompletableFuture<EInstance> getInstance(String instance) {
-        CompletableFuture<EInstance> future = new CompletableFuture<>();
+    @Override
+    public CompletableFuture<? extends Instance> getInstance(String name) {
+        CompletableFuture<Instance> future = new CompletableFuture<>();
 
         Request request = new Request.Builder()
-                .url(EpsilonEnvironments.getEpsilonURL("/instance/get/" + instance))
+                .url(EpsilonEnvironments.getEpsilonURL("/instance/get/" + name))
                 .build();
 
         okHttp.newCall(request).enqueue(new Callback() {
@@ -37,7 +40,7 @@ public class EInstanceModule {
                     if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
 
                     assert body != null;
-                    EInstance instance = gson.fromJson(body.string(), EInstance.class);
+                    Instance instance = gson.fromJson(body.string(), Instance.class);
 
                     future.complete(instance);
                 }
@@ -47,8 +50,9 @@ public class EInstanceModule {
         return future;
     }
 
-    public CompletableFuture<EInstance[]> getInstances() {
-        CompletableFuture<EInstance[]> future = new CompletableFuture<>();
+    @Override
+    public CompletableFuture<? extends Instance[]> getInstances() {
+        CompletableFuture<Instance[]> future = new CompletableFuture<>();
 
         Request request = new Request.Builder()
                 .url(EpsilonEnvironments.getEpsilonURL("/instance/get_all"))
@@ -59,8 +63,9 @@ public class EInstanceModule {
         return future;
     }
 
-    public CompletableFuture<EInstance[]> getInstances(String template) {
-        CompletableFuture<EInstance[]> future = new CompletableFuture<>();
+    @Override
+    public CompletableFuture<? extends Instance[]> getInstances(String template) {
+        CompletableFuture<Instance[]> future = new CompletableFuture<>();
 
         Request request = new Request.Builder()
                 .url(EpsilonEnvironments.getEpsilonURL("/instance/get_from_template/" + template))
@@ -71,13 +76,14 @@ public class EInstanceModule {
         return future;
     }
 
-    public CompletableFuture<EInstance[]> getInstances(EType type) {
-        CompletableFuture<EInstance[]> future = new CompletableFuture<>();
+    @Override
+    public CompletableFuture<? extends Instance[]> getInstances(EType type) {
+        CompletableFuture<Instance[]> future = new CompletableFuture<>();
 
         getInstances().whenCompleteAsync((instances, error) -> {
-            EInstance[] array = Arrays.stream(instances)
+            Instance[] array = Arrays.stream(instances)
                     .filter(instance -> instance.getType() == type)
-                    .toArray(EInstance[]::new);
+                    .toArray(Instance[]::new);
 
             future.complete(array);
         });
@@ -85,10 +91,12 @@ public class EInstanceModule {
         return future;
     }
 
+    @Override
     public boolean openInstance(String template) {
         return openInstance(template, new Object());
     }
 
+    @Override
     public <T> boolean openInstance(String template, T content) {
         MediaType media = MediaType.parse("application/json; charset=utf-8");
         RequestBody body = RequestBody.create(gson.toJson(content), media);
@@ -112,6 +120,7 @@ public class EInstanceModule {
         return false;
     }
 
+    @Override
     public boolean closeInstance(String name) {
         Request request = new Request.Builder()
                 .url(EpsilonEnvironments.getEpsilonURL("/instance/close/" + name))
@@ -132,6 +141,7 @@ public class EInstanceModule {
         return false;
     }
 
+    @Override
     public boolean inGameInstance(String name) {
         Request request = new Request.Builder()
                 .url(EpsilonEnvironments.getEpsilonURL("/instance/in_game/" + name))
@@ -152,7 +162,7 @@ public class EInstanceModule {
         return false;
     }
 
-    private void getInstances(CompletableFuture<EInstance[]> future, Request request) {
+    private void getInstances(CompletableFuture<Instance[]> future, Request request) {
         okHttp.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
@@ -165,7 +175,7 @@ public class EInstanceModule {
                     if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
 
                     assert body != null;
-                    EInstanceList instances = gson.fromJson(body.string(), EInstanceList.class);
+                    InstanceList instances = gson.fromJson(body.string(), InstanceList.class);
 
                     future.complete(instances.getInstances());
                 }

@@ -7,5 +7,6 @@ dependencies {
 
     implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.9.3'
 
+    implementation project(":epsilon-exporter-api")
     implementation project(":epsilon-exporter-common")
 }
