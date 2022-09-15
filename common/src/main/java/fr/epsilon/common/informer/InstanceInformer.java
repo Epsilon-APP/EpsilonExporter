@@ -26,7 +26,7 @@ public class InstanceInformer extends EInstanceInformer {
 
     public InstanceInformer(String namespace, SharedInformerFactory informerFactory, GenericKubernetesApi<EpsilonInstanceCRD, EpsilonInstanceCRDList> epsilonInstanceClient) {
         this.instanceInformer = informerFactory.sharedIndexInformerFor(epsilonInstanceClient,
-                EpsilonInstanceCRD.class, TimeUnit.MINUTES.toMillis(10), namespace);
+                EpsilonInstanceCRD.class, TimeUnit.SECONDS.toMillis(1), namespace);
 
         this.instanceStore = new Lister<>(instanceInformer.getIndexer());
 
@@ -34,25 +34,21 @@ public class InstanceInformer extends EInstanceInformer {
 
         instanceInformer.addEventHandlerWithResyncPeriod(new ResourceEventHandler<EpsilonInstanceCRD>() {
             @Override
-            public void onAdd(EpsilonInstanceCRD instance) {
-            }
+            public void onAdd(EpsilonInstanceCRD instance) {}
 
             @Override
             public void onUpdate(EpsilonInstanceCRD oldInstance, EpsilonInstanceCRD newInstance) {
-                if (newInstance.getStatus() != null) {
-                    for (EInstanceInformerListener listener : listeners) {
+                if (newInstance.getStatus() != null)
+                    for (EInstanceInformerListener listener : listeners)
                         listener.onInstanceUpdate(newInstance.getInstance());
-                    }
-                }
             }
 
             @Override
             public void onDelete(EpsilonInstanceCRD instance, boolean deletedFinalStateUnknown) {
-                for (EInstanceInformerListener listener : listeners) {
+                for (EInstanceInformerListener listener : listeners)
                     listener.onInstanceRemove(instance.getInstance());
-                }
             }
-        }, TimeUnit.MINUTES.toMillis(5));
+        }, TimeUnit.SECONDS.toMillis(1));
     }
 
     @Override
