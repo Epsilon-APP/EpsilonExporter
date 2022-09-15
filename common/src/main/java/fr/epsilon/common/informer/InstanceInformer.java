@@ -49,7 +49,7 @@ public class InstanceInformer extends EInstanceInformer {
             @Override
             public void onDelete(EpsilonInstanceCRD instance, boolean deletedFinalStateUnknown) {
                 for (EInstanceInformerListener listener : listeners) {
-                    listener.onInstanceUpdate(instance.getInstance());
+                    listener.onInstanceRemove(instance.getInstance());
                 }
             }
         }, TimeUnit.MINUTES.toMillis(5));
