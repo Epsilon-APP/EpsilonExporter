@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-  compileOnly 'com.github.Epsilon-APP.EpsilonExporter:epsilon-exporter-api:v2.1.0'
+  compileOnly 'com.github.Epsilon-APP.EpsilonExporter:epsilon-exporter-api:v2.1.1'
 }
 ```
 
@@ -30,7 +30,7 @@ Import with Maven
 <dependency>
   <groupId>com.github.Epsilon-APP.EpsilonExporter</groupId>
   <artifactId>epsilon-exporter-api</artifactId>
-  <version>v2.1.0</version>
+  <version>v2.1.1</version>
 </dependency>
 ```
 ## Authors
