@@ -88,6 +88,11 @@ public class Epsilon extends EpsilonAPI {
         return singleton;
     }
 
+    public static Epsilon initExternal() {
+        singleton = new Epsilon(false);
+        return singleton;
+    }
+
     @Override
     public InstanceInformer runInstanceInformer() {
         informerFactory.startAllRegisteredInformers();
