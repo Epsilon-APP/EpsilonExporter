@@ -1,6 +1,7 @@
 package fr.epsilon.common.instance;
 
 import com.google.gson.Gson;
+import fr.epsilon.api.instance.EInstance;
 import fr.epsilon.api.instance.EInstanceModule;
 import fr.epsilon.api.instance.EType;
 import fr.epsilon.common.utils.EpsilonEnvironments;
@@ -92,12 +93,12 @@ public class InstanceModule extends EInstanceModule {
     }
 
     @Override
-    public boolean openInstance(String template) {
+    public EInstance openInstance(String template) {
         return openInstance(template, new Object());
     }
 
     @Override
-    public <T> boolean openInstance(String template, T content) {
+    public <T> EInstance openInstance(String template, T content) {
         MediaType media = MediaType.parse("application/json; charset=utf-8");
         RequestBody body = RequestBody.create(gson.toJson(content), media);
 
@@ -110,14 +111,19 @@ public class InstanceModule extends EInstanceModule {
             Response response = okHttp.newCall(request).execute();
             boolean successful = response.isSuccessful();
 
+            ResponseBody bodyResponse = response.body();
+
+            assert bodyResponse != null;
+            Instance instance = gson.fromJson(bodyResponse.string(), Instance.class);
+
             response.close();
 
-            return successful;
+            return instance;
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return false;
+        return null;
     }
 
     @Override
