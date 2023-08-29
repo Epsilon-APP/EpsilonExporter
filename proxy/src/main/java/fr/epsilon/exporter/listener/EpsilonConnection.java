@@ -41,10 +41,10 @@ public class EpsilonConnection implements ReconnectHandler, Listener {
 
     @EventHandler
     public void onPing(ProxyPingEvent event) {
-        ServerPing ping = event.getResponse();
-        String visibleSlots = template.getLabels().getOrDefault("visible-slots", "1000");
-
-        ping.getPlayers().setMax(Integer.parseInt(visibleSlots));
+//        ServerPing ping = event.getResponse();
+//        String visibleSlots = template.getLabels().getOrDefault("visible-slots", "1000");
+//
+//        ping.getPlayers().setMax(Integer.parseInt(visibleSlots));
     }
 
     @EventHandler

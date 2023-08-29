@@ -10,6 +10,7 @@ import io.kubernetes.client.informer.ResourceEventHandler;
 import io.kubernetes.client.informer.SharedIndexInformer;
 import io.kubernetes.client.informer.SharedInformerFactory;
 import io.kubernetes.client.informer.cache.Lister;
+import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.util.generic.GenericKubernetesApi;
 
 import java.util.ArrayList;
@@ -24,13 +25,19 @@ public class InstanceInformer extends EInstanceInformer {
 
     private List<EInstanceInformerListener> listeners;
 
+    private String namespace;
+    private GenericKubernetesApi<EpsilonInstanceCRD, EpsilonInstanceCRDList> epsilonInstanceClient;
+
     public InstanceInformer(String namespace, SharedInformerFactory informerFactory, GenericKubernetesApi<EpsilonInstanceCRD, EpsilonInstanceCRDList> epsilonInstanceClient) {
         this.instanceInformer = informerFactory.sharedIndexInformerFor(epsilonInstanceClient,
-                EpsilonInstanceCRD.class, TimeUnit.SECONDS.toMillis(1), namespace);
+                EpsilonInstanceCRD.class, TimeUnit.MINUTES.toMillis(5), namespace);
 
         this.instanceStore = new Lister<>(instanceInformer.getIndexer());
 
         this.listeners = new ArrayList<>();
+
+        this.namespace = namespace;
+        this.epsilonInstanceClient = epsilonInstanceClient;
 
         instanceInformer.addEventHandlerWithResyncPeriod(new ResourceEventHandler<EpsilonInstanceCRD>() {
             @Override
@@ -38,9 +45,7 @@ public class InstanceInformer extends EInstanceInformer {
 
             @Override
             public void onUpdate(EpsilonInstanceCRD oldInstance, EpsilonInstanceCRD newInstance) {
-                if (newInstance.getStatus() != null)
-                    for (EInstanceInformerListener listener : listeners)
-                        listener.onInstanceUpdate(newInstance.getInstance());
+                update(newInstance);
             }
 
             @Override
@@ -48,7 +53,13 @@ public class InstanceInformer extends EInstanceInformer {
                 for (EInstanceInformerListener listener : listeners)
                     listener.onInstanceRemove(instance.getInstance());
             }
-        }, TimeUnit.SECONDS.toMillis(1));
+        }, TimeUnit.MINUTES.toMillis(10));
+    }
+
+    private void update(EpsilonInstanceCRD instance) {
+        if (instance.getStatus() != null)
+            for (EInstanceInformerListener listener : listeners)
+                listener.onInstanceUpdate(instance.getInstance());
     }
 
     @Override
@@ -80,5 +91,12 @@ public class InstanceInformer extends EInstanceInformer {
     @Override
     public void registerListener(EInstanceInformerListener listener) {
         listeners.add(listener);
+
+        try {
+            for (EpsilonInstanceCRD instance : epsilonInstanceClient.list(namespace).throwsApiException().getObject().getItems())
+                update(instance);
+        } catch (ApiException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -41,6 +41,10 @@ public class Epsilon extends EpsilonAPI {
     private Template template;
 
     public Epsilon() {
+        this(true);
+    }
+
+    public Epsilon(boolean internal) {
         Path namespacePath = Paths.get("/var/run/secrets/kubernetes.io/serviceaccount/namespace");
 
         try (Stream<String> lines = Files.lines(namespacePath)) {
@@ -63,10 +67,12 @@ public class Epsilon extends EpsilonAPI {
         OkHttpClient okHttp = new OkHttpClient();
         Gson gson = new Gson();
 
-        try (FileReader reader = new FileReader("./details.epsilon")) {
-            this.template = gson.fromJson(reader, Template.class);
-        } catch (IOException e) {
-            Logger.getAnonymousLogger().info("Read details.epsilon failed.");
+        if (internal) {
+            try (FileReader reader = new FileReader("./details.epsilon")) {
+                this.template = gson.fromJson(reader, Template.class);
+            } catch (IOException e) {
+                Logger.getAnonymousLogger().info("Read details.epsilon failed.");
+            }
         }
 
         this.name = System.getenv("HOSTNAME");
