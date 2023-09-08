@@ -93,12 +93,12 @@ public class InstanceModule extends EInstanceModule {
     }
 
     @Override
-    public EInstance openInstance(String template) {
+    public String openInstance(String template) {
         return openInstance(template, new Object());
     }
 
     @Override
-    public <T> EInstance openInstance(String template, T content) {
+    public <T> String openInstance(String template, T content) {
         MediaType media = MediaType.parse("application/json; charset=utf-8");
         RequestBody body = RequestBody.create(gson.toJson(content), media);
 
@@ -109,16 +109,15 @@ public class InstanceModule extends EInstanceModule {
 
         try {
             Response response = okHttp.newCall(request).execute();
-            boolean successful = response.isSuccessful();
 
             ResponseBody bodyResponse = response.body();
 
             assert bodyResponse != null;
-            Instance instance = gson.fromJson(bodyResponse.string(), Instance.class);
+            String instanceName = bodyResponse.string();
 
             response.close();
 
-            return instance;
+            return instanceName;
         } catch (IOException e) {
             e.printStackTrace();
         }

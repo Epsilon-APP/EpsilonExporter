@@ -38,18 +38,18 @@ public abstract class EInstanceModule {
      * Open instance with template name
      *
      * @param template Template name
-     * @return Instance or null if not opened
+     * @return Instance name or null if not opened
      */
-    public abstract EInstance openInstance(String template);
+    public abstract String openInstance(String template);
 
     /**
      * Open instance with template name
      *
      * @param template Template name
      * @param content  Content field of instance
-     * @return Instance or null if not opened
+     * @return Instance name or null if not opened
      */
-    public abstract <T> EInstance openInstance(String template, T content);
+    public abstract <T> String openInstance(String template, T content);
 
     /**
      * Close instance
