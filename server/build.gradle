@@ -5,7 +5,7 @@ repositories {
 dependencies {
     compileOnly 'org.github.paperspigot:paperspigot-api:1.8.8-R0.1-SNAPSHOT'
 
-    implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.9.3'
+    implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.11.0'
 
     implementation project(":epsilon-exporter-api")
     implementation project(":epsilon-exporter-common")

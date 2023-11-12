@@ -9,7 +9,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:6.1.0'
+        classpath 'com.github.johnrengelman:shadow:8.1.1'
     }
 }
 
@@ -19,10 +19,12 @@ subprojects {
     apply plugin: 'com.github.johnrengelman.shadow'
     apply plugin: 'java'
 
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
+    compileJava {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
 
-    tasks.withType(JavaCompile) {
+    tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8'
     }
 
@@ -44,9 +46,5 @@ subprojects {
                 from components.java
             }
         }
-    }
-
-    shadowJar {
-        archiveFileName = "${baseName}-${classifier}.${extension}"
     }
 }
