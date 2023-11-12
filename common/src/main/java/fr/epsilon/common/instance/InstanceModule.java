@@ -1,7 +1,6 @@
 package fr.epsilon.common.instance;
 
 import com.google.gson.Gson;
-import fr.epsilon.api.instance.EInstance;
 import fr.epsilon.api.instance.EInstanceModule;
 import fr.epsilon.api.instance.EType;
 import fr.epsilon.common.utils.EpsilonEnvironments;

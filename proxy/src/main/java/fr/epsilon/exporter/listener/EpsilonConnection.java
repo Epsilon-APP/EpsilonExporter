@@ -3,7 +3,6 @@ package fr.epsilon.exporter.listener;
 import fr.epsilon.common.template.Template;
 import fr.epsilon.exporter.EpsilonExporter;
 import net.md_5.bungee.api.ReconnectHandler;
-import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
