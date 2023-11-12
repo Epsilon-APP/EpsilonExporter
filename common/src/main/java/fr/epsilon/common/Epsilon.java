@@ -40,6 +40,8 @@ public class Epsilon extends EpsilonAPI {
 
     private Template template;
 
+    private boolean reachable;
+
     public Epsilon() {
         this(true);
     }
@@ -79,6 +81,8 @@ public class Epsilon extends EpsilonAPI {
 
         this.instanceModule = new InstanceModule(okHttp, gson);
         this.queueModule = new QueueModule(okHttp, gson);
+
+        this.reachable = true;
     }
 
     public static Epsilon get() {
@@ -126,7 +130,12 @@ public class Epsilon extends EpsilonAPI {
     }
 
     @Override
+    public void setReachable(boolean value) {
+        this.reachable = value;
+    }
+
+    @Override
     public boolean isReachable() {
-        return true;
+        return reachable;
     }
 }

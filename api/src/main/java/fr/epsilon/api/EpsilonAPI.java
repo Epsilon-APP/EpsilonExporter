@@ -66,6 +66,12 @@ public abstract class EpsilonAPI {
     public abstract EQueueModule queueModule();
 
     /**
+     * Set if server is reachable
+     * @param value
+     */
+    public abstract void setReachable(boolean value);
+
+    /**
      * Get if server is reachable
      *
      * @return boolean
