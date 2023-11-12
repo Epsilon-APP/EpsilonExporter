@@ -4,12 +4,8 @@ import fr.epsilon.common.Epsilon;
 import fr.epsilon.common.template.Template;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class EpsilonExporter extends JavaPlugin {
     @Override
@@ -37,12 +33,7 @@ public class EpsilonExporter extends JavaPlugin {
             mapIgniter.load();
             getServer().getLogger().info("Load maps ...");
 
-            try {
-                Path path = Paths.get("epsilon_start");
-                Files.createFile(path);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            EpsilonReachTask.init(this);
         });
     }
 

@@ -5,11 +5,6 @@ import fr.epsilon.exporter.listener.EpsilonConnection;
 import fr.epsilon.exporter.listener.EpsilonRegister;
 import net.md_5.bungee.api.plugin.Plugin;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 public class EpsilonExporter extends Plugin {
     private Epsilon epsilon;
     private EpsilonRegister register;
@@ -32,12 +27,7 @@ public class EpsilonExporter extends Plugin {
 
         EpsilonEventStream.init(this);
 
-        try {
-            Path path = Paths.get("epsilon_start");
-            Files.createFile(path);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        EpsilonReachTask.init(this);
     }
 
     public Epsilon getEpsilon() {

@@ -65,6 +65,13 @@ public abstract class EpsilonAPI {
      */
     public abstract EQueueModule queueModule();
 
+    /**
+     * Get if server is reachable
+     *
+     * @return boolean
+     */
+    public abstract boolean isReachable();
+
     public EpsilonAPI() {
         singleton = this;
     }

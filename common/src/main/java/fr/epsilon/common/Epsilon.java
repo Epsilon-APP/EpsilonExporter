@@ -124,4 +124,9 @@ public class Epsilon extends EpsilonAPI {
     public QueueModule queueModule() {
         return queueModule;
     }
+
+    @Override
+    public boolean isReachable() {
+        return true;
+    }
 }
