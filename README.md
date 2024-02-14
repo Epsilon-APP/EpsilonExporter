@@ -3,6 +3,8 @@
 Epsilon Exporter is an essential plugin allowing to make a bridge between the Epsilon and the instances.
 
 An API is made available.
+
+[See global project](https://github.com/Epsilon-APP/)
 ## Import EpsilonAPI dependencie
 
 Import with Gradle
